@@ -23,8 +23,8 @@ export const CrearServicios = () => {
     <Layout style={{ flex: 1 }}>
       <ScrollView style={{ marginHorizontal: 40, marginTop: 40 }}>
         <Layout style={{ paddingTop: 20 }}>
-          <Text category="h1">Crear Servicios</Text>
-          <Text category="p2">Ingrese los detalles del servicio</Text>
+          <Text category="h1">MARCANDO ENTRADA</Text>
+          <Text category="p2">Ingrese los detalles de su entrada</Text>
         </Layout>
 
         {/* Inputs */}
@@ -53,14 +53,14 @@ export const CrearServicios = () => {
             onChangeText={setContacto}
             style={{ marginBottom: 10 }}
           />
-        </Layout>
+        </Layout>*/
 
         {/* Space */}
         <Layout style={{ height: 10 }} />
 
         {/* Button */}
         <Layout>
-          <Button onPress={handleCrearServicio}>Crear Servicio</Button>
+          <Button onPress={handleCrearServicio}>Mandar asistencia</Button>
         </Layout>
       </ScrollView>
     </Layout>

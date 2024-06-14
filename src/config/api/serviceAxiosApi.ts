@@ -4,11 +4,11 @@ import { Platform } from 'react-native';
 
 
 
-export const API_URL = "http://10.206.93.85:3000/api"
+export const API_URL = "http://192.168.56.1:3000/api"
 
 
 
-const serviceAxiosApi = axios.create({
+const serviceAxiosApi = axios.create({ 
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',

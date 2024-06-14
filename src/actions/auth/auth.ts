@@ -8,15 +8,14 @@ import { AuthResponse } from "../../infrastucture/interfaces/auth.responses";
   const returnUserToken = ( data: AuthResponse ) => {
 
     const user: User = {
-      id: data._id,
-      name: data.name,
-      username: data.username,
-      email: data.email
+      id: data.user_id,
+      rol1: data.user_role,
     }
   
     return {
       user: user,
       access_token: data.access_token,
+      user_id: data.user_id,
     }
   }
   
@@ -28,7 +27,7 @@ export const authLogin = async (username: string, password: string) => {
             username,
             password,
           });
-    
+          
     return returnUserToken(data);
       
     } catch (error) {

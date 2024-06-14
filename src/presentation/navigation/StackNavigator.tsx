@@ -7,17 +7,21 @@ import { ServiceScreen } from './screens/service/ServiceScreen';
 import { CrearServicios } from './screens/home/CrearServicios';
 import { VerServicios } from './screens/home/VerServicios';
 import { ChangePassword } from './screens/auth/ChangePassword';
+import {UpdateInfo} from './screens/home/UpdateInfo';
+import RegisterAttendanceScreen from './screens/home/RegisterAttendanceScreen';
 
 
 export type RootStackParams = {
     LoadingScreen: undefined;
-    LoginScreen: undefined;
+    LoginScreen: {userId: string, password: string, email: string, name: string, username: string, rol1: string, access_token: string};
     RegisterScreen: undefined;
     HomeScreen: undefined;
     CrearServicios: undefined;
     VerServicios: undefined;
     ChangePassword: undefined;
     ServiceScreen: {productId: string};
+    UpdateInfo: { userId: string };
+    RegisterAttendanceScreen: undefined;
   };
 
 
@@ -74,7 +78,18 @@ export type RootStackParams = {
           name="ChangePassword"
           component={ChangePassword}
         />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="UpdateInfo"
+          component={UpdateInfo}
+/>
         <Stack.Screen name="ServiceScreen" component={ServiceScreen} />
+
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="RegisterAttendanceScreen"
+          component={RegisterAttendanceScreen}
+        />
       </Stack.Navigator>
     );
   };
