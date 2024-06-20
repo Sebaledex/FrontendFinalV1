@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 
 
-export const API_URL = "http://10.206.93.85:3000/api"
+export const API_URL = "http://192.168.100.2:3000/api"
 
 
 

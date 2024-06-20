@@ -3,10 +3,11 @@ import { LoginScreen } from './screens/auth/LoginScreen';
 import { LoadingScreen } from './screens/loading/LoadingScreen';
 import { HomeScreen } from './screens/home/HomeScreen';
 import { RegisterScreen } from './screens/auth/RegisterScreen';
-import { ServiceScreen } from './screens/service/ServiceScreen';
 import { CrearServicios } from './screens/home/CrearServicios';
 import { VerServicios } from './screens/home/VerServicios';
 import { ChangePassword } from './screens/auth/ChangePassword';
+import RegisterAttendanceScreen from './screens/home/RegisterAttendanceScreen';
+
 
 
 export type RootStackParams = {
@@ -17,7 +18,7 @@ export type RootStackParams = {
     CrearServicios: undefined;
     VerServicios: undefined;
     ChangePassword: undefined;
-    ServiceScreen: {productId: string};
+    RegisterAttendanceScreen: undefined;
   };
 
 
@@ -74,7 +75,11 @@ export type RootStackParams = {
           name="ChangePassword"
           component={ChangePassword}
         />
-        <Stack.Screen name="ServiceScreen" component={ServiceScreen} />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="RegisterAttendanceScreen"
+          component={RegisterAttendanceScreen}
+        />
       </Stack.Navigator>
     );
   };

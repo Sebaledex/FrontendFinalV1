@@ -11,7 +11,8 @@ import { AuthResponse } from "../../infrastucture/interfaces/auth.responses";
       id: data._id,
       name: data.name,
       username: data.username,
-      email: data.email
+      email: data.email,
+      roles: data.roles,
     }
   
     return {
