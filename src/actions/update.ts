@@ -6,7 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const returnUserToken = ( data: UpdateResponse ) => {
   const user: User = {
     id: data._id,
-    rol1: data.rol1,}
+    rol1: data.rol1,
+    name: "",
+    username: "",
+    email: ""
+  }
 
   return {
     user: user,

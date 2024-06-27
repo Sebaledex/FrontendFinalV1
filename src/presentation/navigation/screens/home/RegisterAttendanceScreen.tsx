@@ -1,3 +1,4 @@
+/*
 import React, { useState } from 'react';
 import { Alert, useWindowDimensions, View } from 'react-native';
 import { Layout, Text, Input, Button } from '@ui-kitten/components';
@@ -65,4 +66,5 @@ export const RegistrarAsistenciaScreen = () => {
   );
 };
 
-export default RegistrarAsistenciaScreen;
+export default RegistrarAsistenciaScreen; 
+*/

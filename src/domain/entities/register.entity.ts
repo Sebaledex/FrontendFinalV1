@@ -2,7 +2,11 @@ import { User } from "./user.entity";
 
 export interface Register {
     id: string;
-    name: string;
-    city: string;
-    users: User[];
+    coordinates: {
+      latitude: string;
+      longitude: string;
+    };
+    user_id: string;
+    checkIn: Date;
+    checkOut: Date;
   }

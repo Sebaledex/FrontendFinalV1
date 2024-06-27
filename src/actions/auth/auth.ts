@@ -10,6 +10,9 @@ import { AuthResponse } from "../../infrastucture/interfaces/auth.responses";
     const user: User = {
       id: data.user_id,
       rol1: data.user_role,
+      name: data.name,
+      username: data.username,
+      email: ""
     }
   
     return {
@@ -52,9 +55,5 @@ export const authLogin = async (username: string, password: string) => {
       console.log(error);
       return null;
     }
-
-
-
-
 
   };

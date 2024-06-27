@@ -1,0 +1,1 @@
+export type RegisterStatus = 'working' | 'not working';
