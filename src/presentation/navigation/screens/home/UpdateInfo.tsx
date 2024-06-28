@@ -17,7 +17,6 @@ export const UpdateInfo = ({ navigation, route }: Props) => {
     name: '',
     username: '',
     email: '',
-    password: '',
   });
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -53,7 +52,7 @@ export const UpdateInfo = ({ navigation, route }: Props) => {
       return;
     }
 
-    if (form.username.length === 0 && form.password.length === 0 && form.email.length === 0 && form.name.length === 0) {
+    if (form.username.length === 0 && form.email.length === 0 && form.name.length === 0) {
       Alert.alert('Error', 'Debe ingresar al menos un dato');
       return;
     }
@@ -64,7 +63,6 @@ export const UpdateInfo = ({ navigation, route }: Props) => {
         ...(form.name && { name: form.name }),
         ...(form.username && { username: form.username }),
         ...(form.email && { email: form.email }),
-        ...(form.password && { password: form.password }),
       };
       if (!userId) {
         Alert.alert('Error', 'ID de usuario no proporcionado');
@@ -115,15 +113,6 @@ export const UpdateInfo = ({ navigation, route }: Props) => {
             value={form.email}
             onChangeText={(email) => setForm({ ...form, email })}
             accessoryLeft={<MyIcon name="email-outline" />}
-            style={{ marginBottom: 10 }}
-          />
-          <Input
-            placeholder="Contraseña"
-            autoCapitalize="none"
-            value={form.password}
-            onChangeText={(password) => setForm({ ...form, password })}
-            secureTextEntry
-            accessoryLeft={<MyIcon name="lock-outline" />}
             style={{ marginBottom: 10 }}
           />
         </Layout>

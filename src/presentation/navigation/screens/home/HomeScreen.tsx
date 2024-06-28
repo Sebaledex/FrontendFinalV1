@@ -122,53 +122,52 @@ export const HomeScreen = ({ navigation }: Props) => {
         </Layout>
 
         {(isAdmin || isUser) && !isWorking && (
-          <Layout style={{ marginVertical: 20, alignItems: 'center' }}>
+          <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
             <Text category='h5'>Marcar entrada</Text>
-            <Button onPress={handleCheckIn} style={{ marginTop: 10 }}>Marcar Entrada</Button>
+            <Button onPress={handleCheckIn} style={{ marginVertical: 10 }}>Marcar Entrada</Button>
           </Layout>
         )}
 
         {(isAdmin || isUser) && isWorking && (
-          <Layout style={{ marginVertical: 20, alignItems: 'center' }}>
+          <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
             <Text category='h5'>Marcar salida</Text>
-            <Button onPress={handleCheckOut} style={{ marginTop: 10 }}>Marcar Salida</Button>
+            <Button onPress={handleCheckOut} style={{ marginVertical: 10 }}>Marcar Salida</Button>
           </Layout>
         )}
 
         {(isAdmin || isUser) && (
-          <Layout style={{ marginVertical: 20, alignItems: 'center' }}>
+          <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
             <Text category='h5'>Reporte Semanal</Text>
-            <Button onPress={() => handleNavigate('WeeklyResumeScreen')} style={{ marginTop: 10 }}>Reporte Semanal</Button>
+            <Button onPress={() => handleNavigate('WeeklyResumeScreen')} style={{ marginVertical: 10 }}>Reporte Semanal</Button>
           </Layout>
         )}
 
         {isAdmin && (
-          <Layout style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 20 }}>
-            <Button onPress={() => navigation.navigate('SearchUserScreen')}>Reporte por Usuario</Button>
-            <Button onPress={() => navigation.navigate('DashboardScreen')}>Dashboard</Button>
+          <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
+            <Button onPress={() => navigation.navigate('SearchUserScreen')} style={{ marginVertical: 10 }}>Reporte por Usuario</Button>
+            <Button onPress={() => navigation.navigate('DashboardScreen')} style={{ marginVertical: 10 }}>Dashboard</Button>
           </Layout>
         )}
 
         {isAdmin && (
-          <Layout style={{ alignItems: 'center', marginVertical: 20 }}>
-            <Button onPress={() => handleNavigate('ChangeUserRoleScreen')} style={{ marginTop: 10 }}>Cambiar Rol Usuario</Button>
+          <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
+            <Button onPress={() => handleNavigate('ChangeUserRoleScreen')} style={{ marginVertical: 10 }}>Cambiar Rol Usuario</Button>
           </Layout>
         )}
 
-        <Layout style={{ alignItems: 'center', marginVertical: 20 }}>
-          <Button onPress={() => handleNavigate('LocationScreen')} style={{ marginTop: 10 }}>Location Screen</Button>
+        <Layout style={{ alignItems: 'center', marginVertical: 10 }}>
+          <Button onPress={() => handleNavigate('LocationScreen')} style={{ marginVertical: 10 }}>Location Screen</Button>
         </Layout>
 
-        <Layout style={{ alignItems: 'center', marginTop: 'auto' }}>
+        <Layout style={{ alignItems: 'center', marginVertical: 20 }}>
           <Button
             accessoryLeft={<Icon name='log-out-outline' />}
             onPress={handleLogout}
+            style={{ marginVertical: 10 }}
           >
             Cerrar sesión
           </Button>
         </Layout>
-
-
       </Layout>
     </Layout>
   );
