@@ -8,6 +8,8 @@ import { UpdateInfo } from './screens/home/UpdateInfo';
 import {WeeklyResumeScreen} from './screens/reports/WeeklyResume';
 import {SearchUserScreen} from './screens/admin/SearchUser'
 import DashboardScreen from './screens/admin/Dashboard';
+import { ChangeUserRoleScreen } from './screens/home/ChangeUserRoleScreen';
+import { LocationScreen } from './screens/home/LocationScreen';
 
 export type RootStackParams = {
   LoadingScreen: undefined;
@@ -19,6 +21,8 @@ export type RootStackParams = {
   WeeklyResumeScreen:undefined;
   SearchUserScreen:{ userId: string };
   DashboardScreen: undefined;
+  ChangeUserRoleScreen: undefined;
+  LocationScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -36,7 +40,7 @@ export const StackNavigator = () => (
       headerShown: false,
       cardStyleInterpolator: fadeAnimation,
     }}
-  >
+  > 
     <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
     <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
@@ -46,6 +50,8 @@ export const StackNavigator = () => (
     <Stack.Screen name="WeeklyResumeScreen" component={WeeklyResumeScreen} />
     <Stack.Screen name="SearchUserScreen" component={SearchUserScreen} />
     <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
-    
+    <Stack.Screen name="ChangeUserRoleScreen" component={ChangeUserRoleScreen} />
+    <Stack.Screen name="LocationScreen" component={LocationScreen} />
+
   </Stack.Navigator>
 );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Text, Input, Button, Spinner } from "@ui-kitten/components";
 import { Alert, ScrollView, useWindowDimensions } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -19,12 +19,23 @@ export const LoginScreen = ({ navigation }: Props) => {
 
   const { height } = useWindowDimensions();
 
+  // Agregar useEffect para limpiar los campos del formulario cuando la pantalla gana foco
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setForm({ username: '', password: '' });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const onLogin = async () => {
     try {
       setLoading(true);
       setOtherButtonsEnabled(false); // Deshabilitar los otros botones al iniciar sesión
       if (form.username.length === 0 || form.password.length === 0) {
         Alert.alert("Error", "Ingrese información");
+        setLoading(false); // Asegurarse de detener la carga y habilitar los botones
+        setOtherButtonsEnabled(true);
         return;
       }
 
@@ -132,4 +143,3 @@ export const LoginScreen = ({ navigation }: Props) => {
     </Layout>
   );
 };
-
