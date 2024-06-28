@@ -96,8 +96,9 @@ export const HomeScreen = ({ navigation }: Props) => {
       return;
     }
 
-    const time = new Date();
-    const success = await checkOut(time, parseFloat(latitude), parseFloat(longitude));
+    const currentDate = new Date();
+    const adjustedDate = new Date(currentDate.setHours(currentDate.getHours() - 4));
+    const success = await checkOut(adjustedDate, parseFloat(latitude), parseFloat(longitude));
     if (success) {
       Alert.alert('Éxito', 'Registro de salida creado con éxito');
     } else {
