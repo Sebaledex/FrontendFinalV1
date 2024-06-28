@@ -14,4 +14,5 @@ export interface RegisterResponse {
   checkOut: Date;
   edited: boolean;
   editedBy: string;
+  workedHours: number;
 }

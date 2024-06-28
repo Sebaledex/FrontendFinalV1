@@ -23,14 +23,18 @@ export const WeeklyResumeScreen = () => {
   };
 
   const handleSearchRecords = async () => {
-    console.log('Buscando registros de', startDate, 'a', endDate, 'del usuario:', user?.id);
+    console.log('Buscando registros ', startDate, 'a', endDate, 'del usuario:', user?.id);
     const resp = await findRegisterById(startDate.toISOString(), endDate.toISOString());
     if (!resp) {
       console.log('Error al buscar registros');
       return;
     }
-    console.log('Registros encontrados:', resp[0]);
-    setRecords(resp);
+    const formattedRecords = resp.map((item) => ({
+      ...item,
+      checkIn: new Date(item.checkIn),
+      checkOut: new Date(item.checkOut),
+    }));
+    setRecords(formattedRecords);
   }
   
 
@@ -56,14 +60,14 @@ export const WeeklyResumeScreen = () => {
 <Button onPress={handleSearchRecords} style={{ marginBottom: 20 }}>Buscar Registros</Button>
 
 <List
-  data={records}
-  renderItem={({ item }) => (
-    <ListItem
-    title={`Entrada: ${item.checkIn.toLocaleString()}`}
-    description={`Salida: ${item.checkOut.toLocaleString()}`}
-    />
-  )}
-/>
+        data={records}
+        renderItem={({ item }) => (
+          <ListItem
+            title={`Entrada: ${item.checkIn.toLocaleString()}`}
+            description={`Salida: ${item.checkOut.toLocaleString()}`}
+          />
+        )}
+      />
 </Layout>
 );
 };
