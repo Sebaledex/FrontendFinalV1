@@ -29,10 +29,8 @@ export const useAuthStore = create<AuthState>()( (set, get) => ({
           set({ status: 'unauthenticated', access_token: undefined, user: undefined });
           return false;
         }
-        await StorageAdapter.setItem('token', resp.access_token);
         console.log({resp})
         set({ status: 'authenticated', access_token: resp.access_token, user: resp.user});
-        
         return true;
       },    
 
