@@ -22,7 +22,7 @@ export const EditarServicio = () => {
   useEffect(() => {
     const fetchServicios = async () => {
       if (user && user.id) {
-        const resp = await getByUser(user.id);
+        const resp = await getByUser();
         if (resp && resp.length > 0) {
           setServicios(resp);
         } else {
