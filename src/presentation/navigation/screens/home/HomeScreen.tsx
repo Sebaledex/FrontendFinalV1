@@ -3,12 +3,12 @@ import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { useAuthStore } from '../../../store/auth/useAuthStore';
 import { Props } from '@ui-kitten/components/devsupport/services/props/props.service';
 import { StyleSheet, ViewStyle } from 'react-native';
-import GPSView from './GPSView';
 
 export const HomeScreen = ({ navigation }: Props) => {
   const { logout } = useAuthStore();
 
   const handleLogout = async () => {
+    logout();
     navigation.navigate('LoginScreen');
   };
 
@@ -18,63 +18,45 @@ export const HomeScreen = ({ navigation }: Props) => {
 
   return (
     <Layout style={styles.container}>
-      {/* Create Service View */}
+      {/* Mis Servicios Section */}
       <Layout style={styles.section}>
-        <Text category='h5'>Crear Servicios</Text>
-        <Button style={styles.button} onPress={() => navigation.navigate('CrearServicios')}>
-          Ir a Crear Servicio
+        <Text category='h5'>Administrar Mis Servicios</Text>
+        <Button style={styles.button} onPress={() => handleNavigate('CrearServicios')}>
+          Crear Servicios
         </Button>
-      </Layout>
-
-      {/* Edit Service View */}
-      <Layout style={styles.section}>
-        <Text category='h5'>Editar Servicio</Text>
-        <Button style={styles.button} onPress={() => navigation.navigate('EditarServicio') }>
-          Ir a Editar Servicio
+        <Button style={styles.button} onPress={() => handleNavigate('EditarServicio')}>
+          Editar Servicio
         </Button>
-      </Layout>
-
-      {/* List Services View */}
-      <Layout style={styles.section}>
-        <Text category='h5'>Listar Servicios</Text>
-        <Button style={styles.button} onPress={() =>navigation.navigate('ListarServicios') }>
-          Ir a Listar Servicios
+        <Button style={styles.button} onPress={() => handleNavigate('ListarServicios')}>
+          Eliminar Servicios
         </Button>
-      </Layout>
-
-      {/* GPS View */}
-      <Layout style={styles.section}>
-        <Text category='h5'>GPS View</Text>
-        <Button style={styles.button} onPress={() => navigation.navigate('GPSView') }>
-          Ir a GPS View
-        </Button>
-      </Layout>
-
-      {/* My Services Button */}
-      <Layout style={styles.section}>
-        <Text category='h5'>Mis Servicios</Text>
         <Button style={styles.button} onPress={() => handleNavigate('Reportes')}>
-          Reporte de Servicios
+          Reportes de Servicios
         </Button>
       </Layout>
 
-      {/* search service */}
+      {/* Home Section */}
       <Layout style={styles.section}>
-        <Text category='h5'>Buscar Servicios</Text>
+        <Text category='h5'>Busqueda de Servicios</Text>
         <Button style={styles.button} onPress={() => handleNavigate('VerServicios')}>
           Buscar Servicios
         </Button>
       </Layout>
 
-
-      {/* Logout Button */}
-      <Button
-        style={[styles.button, { marginTop: 'auto' }]} // Place at the bottom of the screen
-        accessoryLeft={<Icon name='log-out-outline' />}
-        onPress={handleLogout}
-      >
-        Cerrar sesión
-      </Button>
+      {/* GPS and Logout Section */}
+      <Layout style={styles.section}>
+        <Text category='h5'>Otras Funcionalidades</Text>
+        <Button style={styles.button} onPress={() => handleNavigate('GPSView')}>
+          GPS View
+        </Button>
+        <Button
+          style={styles.button}
+          accessoryLeft={<Icon name='log-out-outline' />}
+          onPress={handleLogout}
+        >
+          Cerrar sesión
+        </Button>
+      </Layout>
     </Layout>
   );
 };
@@ -91,7 +73,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   } as ViewStyle,
   button: {
-    width: 200, // Fixed width for all buttons
+    width: 200,
+    marginBottom: 10,
   },
 });
 
