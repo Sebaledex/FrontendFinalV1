@@ -3,8 +3,6 @@ import { User } from "../../../domain/entities/user.entity";
 import { AuthStatus } from "../../../infrastucture/interfaces/auth.status";
 import { authLogin, authSignup } from "../../../actions/auth/auth";
 import { StorageAdapter } from "../../../config/adapters/storage-adapter";
-import { useNavigation } from "@react-navigation/native";
-
 
 
 

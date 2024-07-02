@@ -28,6 +28,36 @@ const returnServiceToken = ( data: ServiceResponse ) => {
     }
   };
 
+  export const serviceGetAvailableHours = async (access_token: string, serviceId: string, date: Date) => {
+    try {
+      console.log(`buscando horarios disponibles`);
+      const { data } = await serviceAxiosApi.get<string[]>(`/v2/service/${serviceId}/horarios-disponibles/${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Error getting available hours:', error);
+      return [];
+    }
+  };
+
+  export const serviceGetById = async (access_token: string, userId: string) => {
+    try {
+      console.log(`buscando servicios por usuario`);
+      const { data } = await serviceAxiosApi.get<ServiceResponse[]>(`/v2/service/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Error getting services by user:', error);
+      return null;
+    }
+  };
+
   export const serviceCreate = async (access_token: string, service: Service, userId: string) => {
     try {
       const { data } = await serviceAxiosApi.post<ServiceResponse>(`/v2/service/${userId}`, service, {
@@ -59,7 +89,7 @@ const returnServiceToken = ( data: ServiceResponse ) => {
   
   export const serviceGetByUser = async (access_token: string, userId: string) => {
     try {
-      const { data } = await serviceAxiosApi.get<ServiceResponse[]>(`/v2/service/user/${userId}`, {
+      const { data } = await serviceAxiosApi.get<ServiceResponse[]>(`/v2/service/service/${userId}`, {
         headers: {
           'Authorization': `Bearer ${access_token}`
         }

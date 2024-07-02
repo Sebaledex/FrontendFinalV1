@@ -24,10 +24,7 @@ import { AxiosError } from 'axios';
 
   export const authLogin = async (username: string, password: string) => {
     console.log('Inicio de authLogin');
-    console.log('Datos de entrada:', { username, password });
-
     try {
-        console.log('Enviando solicitud a /v2/auth/signin');
         const { data } = await serviceAxiosApi.post<AuthResponse>('/v2/auth/signin', {
             username,
             password,
