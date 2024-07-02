@@ -7,4 +7,5 @@ export interface ServiceResponse {
     contacto: string;
     rating: number;
     horariosDisponibles: string[];
+    contadorSolicitudes: number;
 }

@@ -95,6 +95,7 @@ const returnServiceToken = ( data: ServiceResponse ) => {
         }
       });
       return data;
+      console.log(data);
     } catch (error) {
       console.error('Error fetching services by user:', error);
       return null;
@@ -113,4 +114,64 @@ const returnServiceToken = ( data: ServiceResponse ) => {
         console.error('Error updating service:', error);
         return null;
     }
+};
+
+export const ServicetotalSales = async (access_token: string, serviceId: string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<number>(`/v2/service/reports/total-sales/${serviceId}`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching total sales:', error);
+    return null;
+  }
+};
+
+export const serviceMonthlySales = async (access_token: string,serviceId:string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<{ month: number; total: number }[]>(`/v2/service/reports/monthly-sales/${serviceId}`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching monthly sales:', error);
+    return null;
+  }
+};
+
+export const serviceAnnualSales = async (access_token: string,serviceId:string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<{ year: number; total: number }[]>(`/v2/service/reports/annual-sales/${serviceId}`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching monthly sales:', error);
+    return null;
+  }
+};
+
+export const serviceTopServices = async (access_token: string,userId:string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<ServiceResponse[]>(`/v2/service/reports/top-services/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching monthly sales:', error);
+    return null;
+  }
 };
