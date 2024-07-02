@@ -1,22 +1,38 @@
 import React, { useState } from 'react';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 import { Alert, ScrollView } from 'react-native';
+import { useServiceStore } from '../../../store/auth/useServiceStore';
+
 
 export const CrearServicios = () => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [precio, setPrecio] = useState('');
   const [contacto, setContacto] = useState('');
+  const { createService } = useServiceStore();
 
-  const handleCrearServicio = () => {
+  const handleCrearServicio = async () => {
     if (nombre.length === 0 || descripcion.length === 0 || precio.length === 0 || contacto.length === 0) {
       Alert.alert('Error', 'Por favor, completa todos los campos');
       return;
     }
-    // Aquí puedes realizar la lógica para crear el servicio
-    // Por ejemplo, puedes enviar una solicitud a tu API para crear el servicio
-    // Luego puedes manejar el éxito o el error de acuerdo a tu lógica
-    console.log('Crear servicio:', nombre, descripcion, precio, contacto);
+
+    const newService = {
+      nombre,
+      descripcion,
+      precio,
+      contacto,
+      user_id: '', // El ID del usuario se asignará en el backend
+      rating: 0 // Default rating to 0 if not provided
+    };
+
+    const result = await createService(newService);
+
+    if (result) {
+      Alert.alert('Éxito', 'Servicio creado exitosamente');
+    } else {
+      Alert.alert('Error', 'No se pudo crear el servicio');
+    }
   };
 
   return (
@@ -27,7 +43,6 @@ export const CrearServicios = () => {
           <Text category="p2">Ingrese los detalles del servicio</Text>
         </Layout>
 
-        {/* Inputs */}
         <Layout style={{ marginTop: 20 }}>
           <Input
             placeholder="Nombre"
@@ -55,10 +70,8 @@ export const CrearServicios = () => {
           />
         </Layout>
 
-        {/* Space */}
         <Layout style={{ height: 10 }} />
 
-        {/* Button */}
         <Layout>
           <Button onPress={handleCrearServicio}>Crear Servicio</Button>
         </Layout>
