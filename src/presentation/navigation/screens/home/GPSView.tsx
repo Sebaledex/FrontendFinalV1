@@ -1,113 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, PermissionsAndroid, Platform, StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Button, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { Button, Layout, Text } from '@ui-kitten/components';
-import { MyIcon } from '../../../components/ui/MyIcon';
-import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParams } from '../../StackNavigator';
-import Geolocation, { GeolocationResponse, GeolocationError } from '@react-native-community/geolocation';
+import MapViewDirections from 'react-native-maps-directions';
+import { useLocationStore } from '../../../store/useLocationStore';
+import { Location } from '../../../../infrastucture/interfaces/location';
+import { LoadingScreen } from '../loading/LoadingScreen';
+// Ajusta la ruta según tu proyecto
 
-interface Props extends StackScreenProps<RootStackParams, 'GPSView'> {}
-
-export const GPSView = ({ navigation }: Props) => {
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+const GPSView = () => {
+  const { lastKnownLocation, getLocation } = useLocationStore();
+  const [startLocation, setStartLocation] = useState<Location | null>(null);
+  const [endLocation, setEndLocation] = useState<Location | null>(null);
+  const [selectingLocation, setSelectingLocation] = useState<'start' | 'end' | null>(null);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      requestLocationPermission();
-    } else {
-      getCurrentLocation();
+    if (lastKnownLocation === null) {
+      getLocation();
     }
   }, []);
 
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Permiso de Acceso a la Ubicación',
-          message: 'Esta aplicación necesita acceder a tu ubicación',
-          buttonNeutral: 'Preguntar Luego',
-          buttonNegative: 'Cancelar',
-          buttonPositive: 'OK',
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        getCurrentLocation();
-      } else {
-        Alert.alert('Permiso Denegado', 'No se puede acceder a la ubicación');
-      }
-    } catch (err) {
-      console.warn(err);
-      setErrorMsg('Error al solicitar el permiso de ubicación');
+  const handleMapPress = (event: any) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    if (selectingLocation === 'start') {
+      setStartLocation({ latitude, longitude });
+      setSelectingLocation(null);
+    } else if (selectingLocation === 'end') {
+      setEndLocation({ latitude, longitude });
+      setSelectingLocation(null);
     }
   };
 
-  const getCurrentLocation = () => {
-    Geolocation.getCurrentPosition(
-      (position: GeolocationResponse) => {
-        const { latitude, longitude } = position.coords;
-        setLocation({ latitude, longitude });
-        console.log('Latitud:', latitude, 'Longitud:', longitude);
-      },
-      (error: GeolocationError) => {
-        Alert.alert('Error al obtener la ubicación', error.message);
-        setErrorMsg(error.message);
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    );
+  const handleSetStartLocation = () => {
+    setSelectingLocation('start');
+    Alert.alert("Seleccionar Ubicación", "Toca el mapa para seleccionar tu ubicación.");
   };
 
-  const handleBack = () => {
-    navigation.goBack();
+  const handleSetEndLocation = () => {
+    setSelectingLocation('end');
+    Alert.alert("Seleccionar Destino", "Toca el mapa para seleccionar tu destino.");
   };
+
+  if (lastKnownLocation === null) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <Layout style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        {location ? (
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            }}
-            showsUserLocation={true}
-          >
-            {location && (
-              <Marker
-                coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-                title="Ubicación Actual"
-                description="Aquí estás ahora"
-              />
-            )}
-          </MapView>
-        ) : (
-          <Text category="h5" style={styles.loadingText}>
-            {errorMsg ? errorMsg : 'Obteniendo ubicación...'}
-          </Text>
+    <View style={styles.container}>
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: lastKnownLocation.latitude,
+          longitude: lastKnownLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+        onPress={handleMapPress}
+      >
+        {startLocation && (
+          <Marker
+            coordinate={startLocation}
+            title="Tu Ubicación"
+            pinColor="blue"
+          />
         )}
+
+        {endLocation && (
+          <Marker
+            coordinate={endLocation}
+            title="Destino"
+            pinColor="red"
+          />
+        )}
+
+        {startLocation && endLocation && (
+          <MapViewDirections
+            origin={startLocation}
+            destination={endLocation}
+            apikey="AIzaSyBY8DYLuWedzLTyIuheuMUfjG6OtTfYalo" // Reemplaza con tu clave de API
+            strokeWidth={3}
+            strokeColor="hotpink"
+          />
+        )}
+      </MapView>
+
+      <View style={styles.buttonContainer}>
+        <Button title="Tu Ubicación" onPress={handleSetStartLocation} />
+        <Button title="Destino" onPress={handleSetEndLocation} />
       </View>
-      <Button style={styles.button} onPress={handleBack} accessoryLeft={<MyIcon name="arrow-back-outline" />}>
-        Volver
-      </Button>
-    </Layout>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  loadingText: {
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  button: {
-    margin: 20,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    paddingBottom: 20,
   },
 });
 

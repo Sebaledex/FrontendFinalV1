@@ -19,7 +19,7 @@ export const PermissionsChecker = ({children}: PropsWithChildren) => {
       });
     } else if (locationStatus !== 'undetermined') {
       navigation.reset({
-        routes: [{name: 'PermissionsScreen'}],
+        routes: [{name: 'LoadingScreen'}],
       });
     }
   }, [locationStatus]);

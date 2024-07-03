@@ -1,6 +1,5 @@
 import React from 'react';
 import { StackCardStyleInterpolator, createStackNavigator } from '@react-navigation/stack';
-import { StackCardStyleInterpolator, createStackNavigator } from '@react-navigation/stack';
 import { LoginScreen } from './screens/auth/LoginScreen';
 import { LoadingScreen } from './screens/loading/LoadingScreen';
 import { RegisterScreen } from './screens/auth/RegisterScreen';
@@ -15,6 +14,7 @@ import { ListarServicios } from './screens/home/ListarServicios';
 import {HomeScreenMine} from './screens/home/HomeScreenMine';
 import {HomeScreenOther} from './screens/home/HomeScreenOther';
 import HomeScreen from './screens/home/HomeScreen';
+import MapScreen from './screens/map/MapScreen';
 
 
 export type RootStackParams = {
@@ -32,6 +32,8 @@ export type RootStackParams = {
     ListarServicios: undefined;
     HomeScreenMine: undefined;
     HomeScreenOther: undefined;
+    MapScreen: undefined;
+    
 
   };
 
@@ -120,6 +122,11 @@ export type RootStackParams = {
           options={{cardStyleInterpolator: fadeAnimation}}
           name="HomeScreenOther"
           component={HomeScreenOther}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="MapScreen"
+          component={MapScreen}
         />
       </Stack.Navigator>
     );

@@ -23,6 +23,9 @@ export const HomeScreenOther = ({ navigation }: Props) => {
         <Button style={styles.button} onPress={() => handleNavigate('GPSView')}>
           GPS View
         </Button>
+        <Button style={styles.button} onPress={() => handleNavigate('MapScreen')}>
+          GPSTracker
+        </Button>
         <Button
           style={styles.button}
           accessoryLeft={(props) => <Icon {...props} name='log-out-outline' />}
