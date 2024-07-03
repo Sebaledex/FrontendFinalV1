@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Layout, List, ListItem, Text } from '@ui-kitten/components';
+import { Button, Input, Layout, List, ListItem, Text, Avatar } from '@ui-kitten/components';
 import { Alert } from 'react-native';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
 import { useAuthStore } from '../../../store/auth/useAuthStore';
@@ -14,8 +14,10 @@ export const EditarServicio = () => {
     nombre: '',
     descripcion: '',
     precio: '',
-    contacto: ''
+    contacto: '',
+    fotos: []
   });
+  const [firstImage, setFirstImage] = useState<string | null>(null); // Estado para la primera imagen
   const { getByUser, updateService } = useServiceStore();
   const { user } = useAuthStore();
 
@@ -42,8 +44,16 @@ export const EditarServicio = () => {
         nombre: serviceToEdit.nombre,
         descripcion: serviceToEdit.descripcion,
         precio: serviceToEdit.precio || '',
-        contacto: serviceToEdit.contacto || ''
+        contacto: serviceToEdit.contacto || '',
+        fotos: serviceToEdit.fotos || [] // Asegurarse de inicializar las fotos correctamente
       });
+
+      // Mostrar la primera imagen si existe
+      if (serviceToEdit.fotos && serviceToEdit.fotos.length > 0) {
+        setFirstImage(serviceToEdit.fotos[0]);
+      } else {
+        setFirstImage(null); // No hay imágenes
+      }
     }
   };
 
@@ -53,8 +63,10 @@ export const EditarServicio = () => {
       nombre: '',
       descripcion: '',
       precio: '',
-      contacto: ''
+      contacto: '',
+      fotos: []
     });
+    setFirstImage(null);
   };
 
   const handleUpdateService = async (serviceId: string) => {
@@ -74,30 +86,41 @@ export const EditarServicio = () => {
   const renderItem = ({ item }: { item: ServiceResponse }) => {
     if (editingServiceId === item._id) {
       return (
-        <ListItem>
+        <Layout style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
           <Input
             label="Nombre"
             value={newServiceData.nombre}
             onChangeText={value => setNewServiceData({ ...newServiceData, nombre: value })}
+            style={{ marginBottom: 10 }}
           />
           <Input
             label="Descripción"
             value={newServiceData.descripcion}
             onChangeText={value => setNewServiceData({ ...newServiceData, descripcion: value })}
+            style={{ marginBottom: 10 }}
           />
           <Input
             label="Precio"
             value={newServiceData.precio}
             onChangeText={value => setNewServiceData({ ...newServiceData, precio: value })}
+            style={{ marginBottom: 10 }}
           />
           <Input
             label="Contacto"
             value={newServiceData.contacto}
             onChangeText={value => setNewServiceData({ ...newServiceData, contacto: value })}
+            style={{ marginBottom: 10 }}
           />
-          <Button onPress={() => handleUpdateService(item._id)}>Actualizar Datos</Button>
-          <Button onPress={cancelEditing}>Cancelar</Button>
-        </ListItem>
+          {firstImage && (
+            <Avatar
+              source={{ uri: firstImage }}
+              size="giant" // Tamaño grande
+              style={{ width: 200, height: 200, borderRadius: 10, marginRight: 10 }}// Borde redondeado
+            />
+          )}
+          <Button onPress={() => handleUpdateService(item._id)} style={{ marginBottom: 10 }}>Actualizar Datos</Button>
+          <Button onPress={cancelEditing} appearance="outline">Cancelar</Button>
+        </Layout>
       );
     } else {
       return (

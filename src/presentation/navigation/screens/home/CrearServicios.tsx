@@ -1,19 +1,41 @@
 import React, { useState } from 'react';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
-import { Alert, ScrollView } from 'react-native';
+import { Alert, ScrollView, Image } from 'react-native';
 import { useServiceStore } from '../../../store/useServiceStore';
-
+import { launchImageLibrary, ImageLibraryOptions } from 'react-native-image-picker';
 
 export const CrearServicios = () => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [precio, setPrecio] = useState('');
   const [contacto, setContacto] = useState('');
+  const [foto, setFoto] = useState<string | null>(null);
   const { createService } = useServiceStore();
 
+  const handleSelectImage = () => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        if (uri) {
+          setFoto(uri);
+        } else {
+          setFoto(null);
+        }
+      }
+    });
+  };
+
   const handleCrearServicio = async () => {
-    if (nombre.length === 0 || descripcion.length === 0 || precio.length === 0 || contacto.length === 0) {
-      Alert.alert('Error', 'Por favor, completa todos los campos');
+    if (nombre.length === 0 || descripcion.length === 0 || precio.length === 0 || contacto.length === 0 || !foto) {
+      Alert.alert('Error', 'Por favor, completa todos los campos y sube una foto');
       return;
     }
 
@@ -22,6 +44,7 @@ export const CrearServicios = () => {
       descripcion,
       precio,
       contacto,
+      fotos: [foto],
       user_id: '', // El ID del usuario se asignará en el backend
       rating: 0 // Default rating to 0 if not provided
     };
@@ -68,6 +91,10 @@ export const CrearServicios = () => {
             onChangeText={setContacto}
             style={{ marginBottom: 10 }}
           />
+          <Button onPress={handleSelectImage}>Subir Foto</Button>
+          {foto && (
+            <Image source={{ uri: foto }} style={{ width: 100, height: 100, marginTop: 10 }} />
+          )}
         </Layout>
 
         <Layout style={{ height: 10 }} />

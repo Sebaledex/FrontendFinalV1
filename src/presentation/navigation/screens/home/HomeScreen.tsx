@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Layout, Text, Icon } from '@ui-kitten/components';
+import { Button, Layout, Text, Icon, Avatar } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
 import { Props } from '@ui-kitten/components/devsupport/services/props/props.service';
 import { useServiceStore } from '../../../store/useServiceStore';
@@ -32,21 +32,28 @@ export const HomeScreen = ({ navigation }: Props) => {
   return (
     <Layout style={styles.container}>
       <Layout style={styles.section}>
-        <Text category='h5'>Busqueda de Servicios</Text>
+        <Text category='h5'>Búsqueda de Servicios</Text>
         <Button style={styles.button} onPress={() => handleNavigate('VerServicios')}>
           Buscar Servicios
         </Button>
       </Layout>
 
       {/* Muestra los servicios principales si están disponibles */}
-      {services && (
+      {services && services.length > 0 && (
         <Layout style={styles.section}>
-          <Text category='h6'>Servicios Más Contratados :</Text>
+          <Text category='h6'>Servicios Más Contratados:</Text>
           {services.map((service, index) => (
             <View key={index} style={styles.serviceItem}>
-              <Text style={styles.serviceName}>{service.nombre}</Text>
-              <Text style={styles.serviceDescription}>{service.descripcion}</Text>
-              <Text style={styles.serviceRating}>Rating: {service.rating}</Text>
+              <Avatar
+                source={{ uri: service.fotos && service.fotos.length > 0 ? service.fotos[0] : undefined }}
+                size='large'
+                style={styles.serviceImage}
+              />
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceName}>{service.nombre}</Text>
+                <Text style={styles.serviceDescription}>{service.descripcion}</Text>
+                <Text style={styles.serviceRating}>Rating: {service.rating}</Text>
+              </View>
             </View>
           ))}
         </Layout>
@@ -134,7 +141,18 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     borderRadius: 5,
+    flexDirection: 'row', // Alinea elementos en horizontal
+    alignItems: 'center', // Alinea verticalmente al centro
     width: '100%', // Asegúrate de que ocupe todo el ancho del padre
+  },
+  serviceImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40, // Para hacerla circular
+    marginRight: 10,
+  },
+  serviceInfo: {
+    flex: 1, // Ocupa el espacio disponible
   },
   serviceName: {
     fontSize: 18,

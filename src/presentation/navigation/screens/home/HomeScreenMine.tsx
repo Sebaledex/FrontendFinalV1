@@ -24,6 +24,9 @@ export const HomeScreenMine = ({ navigation }: Props) => {
         <Button style={styles.button} onPress={() => handleNavigate('Reportes')}>
           Reportes de Servicios
         </Button>
+        <Button style={styles.button} onPress={() => handleNavigate('CargarImagen')}>
+          Cargar imagenes
+        </Button>        
       </Layout>
 
       {/* Botones con íconos en la parte inferior */}

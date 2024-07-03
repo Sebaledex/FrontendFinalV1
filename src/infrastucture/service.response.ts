@@ -5,6 +5,7 @@ export interface ServiceResponse {
     descripcion: string;
     precio: string;
     contacto: string;
+    fotos?: string[];
     rating: number;
     horariosDisponibles: string[];
     contadorSolicitudes: number;
