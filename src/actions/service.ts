@@ -175,3 +175,17 @@ export const serviceTopServices = async (access_token: string,userId:string) => 
     return null;
   }
 };
+
+export const serviceTopServicesAll= async (access_token: string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<ServiceResponse[]>(`/v2/service/top/requested`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return data;
+  } catch (error) {
+    console.error('Error fetching monthly sales:', error);
+    return null;
+  }
+};

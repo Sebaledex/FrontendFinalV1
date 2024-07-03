@@ -2,7 +2,6 @@ import React from 'react';
 import { StackCardStyleInterpolator, createStackNavigator } from '@react-navigation/stack';
 import { LoginScreen } from './screens/auth/LoginScreen';
 import { LoadingScreen } from './screens/loading/LoadingScreen';
-import { HomeScreen } from './screens/home/HomeScreen';
 import { RegisterScreen } from './screens/auth/RegisterScreen';
 import { ServiceScreen } from './screens/service/ServiceScreen';
 import { CrearServicios } from './screens/home/CrearServicios';
@@ -12,6 +11,9 @@ import { Reportes } from './screens/home/Reportes';
 import GPSView from './screens/home/GPSView';
 import { EditarServicio } from './screens/home/EditarServicio';
 import { ListarServicios } from './screens/home/ListarServicios';
+import {HomeScreenMine} from './screens/home/HomeScreenMine';
+import {HomeScreenOther} from './screens/home/HomeScreenOther';
+import HomeScreen from './screens/home/HomeScreen';
 
 
 export type RootStackParams = {
@@ -27,6 +29,9 @@ export type RootStackParams = {
     GPSView: undefined;
     EditarServicio: undefined;
     ListarServicios: undefined;
+    HomeScreenMine: undefined;
+    HomeScreenOther: undefined;
+
   };
 
 
@@ -63,15 +68,16 @@ export type RootStackParams = {
           name="RegisterScreen"
           component={RegisterScreen}
         />
-        <Stack.Screen
-          options={{cardStyleInterpolator: fadeAnimation}}
-          name="HomeScreen"
-          component={HomeScreen}
-        />
+        
         <Stack.Screen
           options={{cardStyleInterpolator: fadeAnimation}}
           name="CrearServicios"
           component={CrearServicios}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="HomeScreen"
+          component={HomeScreen}
         />
         <Stack.Screen
           options={{cardStyleInterpolator: fadeAnimation}}
@@ -103,6 +109,16 @@ export type RootStackParams = {
           options={{cardStyleInterpolator: fadeAnimation}}
           name="ListarServicios"
           component={ListarServicios}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="HomeScreenMine"
+          component={HomeScreenMine}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="HomeScreenOther"
+          component={HomeScreenOther}
         />
       </Stack.Navigator>
     );

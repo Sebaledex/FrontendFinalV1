@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { User } from "../../../domain/entities/user.entity";
 import { useAuthStore } from "./useAuthStore";
 import { ServiceResponse } from "../../../infrastucture/service.response";
-import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetByUser, serviceMonthlySales, serviceTopServices, serviceUpdate } from "../../../actions/service";
+import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetByUser, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate } from "../../../actions/service";
 import { serviceGetAvailableHours } from "../../../actions/service";
 import { Service } from "../../../domain/entities/service.entity";
 
@@ -20,6 +20,7 @@ export interface AuthState {
     monthlySales: (serviceId: string) => Promise<{ month: number; total: number }[] | null>;
     annualSales: (serviceId: string) => Promise<{ year: number; total: number }[] | null>;
     top5Services: () => Promise<false |ServiceResponse[] | null>;
+    topServices: () => Promise<ServiceResponse[] | null>;
 
   }
 
@@ -145,6 +146,18 @@ export interface AuthState {
           }
           return resp;
       },
+
+      topServices: async () => {
+          const { access_token } = useAuthStore.getState();
+          if (!access_token) {
+              return null;
+          }
+          const resp = await serviceTopServicesAll( access_token);
+          if (!resp) {
+              return null;
+          }
+          return resp
       
+      },
   }))
 
