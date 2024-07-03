@@ -18,6 +18,7 @@ import { HomeServicesTaken } from './screens/home/HomeServicesTaken';
 import { NextService } from './screens/home/NextService';
 import { PastService } from './screens/home/PastService';
 import MapScreen from './screens/map/MapScreen';
+import CargarImagen from './screens/home/CargarImagen ';
 
 
 export type RootStackParams = {
@@ -39,6 +40,7 @@ export type RootStackParams = {
     NextService: undefined;
     PastService: undefined;
     MapScreen: undefined;
+    CargarImagen: undefined;
     
 
   };
@@ -148,6 +150,11 @@ export type RootStackParams = {
           options={{cardStyleInterpolator: fadeAnimation}}
           name="MapScreen"
           component={MapScreen}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="CargarImagen"
+          component={CargarImagen}
         />
       </Stack.Navigator>
     );

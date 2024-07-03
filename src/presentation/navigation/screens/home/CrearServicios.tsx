@@ -34,11 +34,12 @@ export const CrearServicios = () => {
   };
 
   const handleCrearServicio = async () => {
-    if (nombre.length === 0 || descripcion.length === 0 || precio.length === 0 || contacto.length === 0 || !foto) {
-      Alert.alert('Error', 'Por favor, completa todos los campos y sube una foto');
+    // Validar que el precio sea un número
+    if (nombre.length === 0 || descripcion.length === 0 || !/^(\d+\.?\d*|\.\d+)$/.test(precio) || contacto.length === 0 || !foto) {
+      Alert.alert('Error', 'Por favor, completa todos los campos correctamente y sube una foto');
       return;
     }
-
+  
     const newService = {
       nombre,
       descripcion,
@@ -46,11 +47,11 @@ export const CrearServicios = () => {
       contacto,
       fotos: [foto],
       user_id: '', // El ID del usuario se asignará en el backend
-      rating: 0 // Default rating to 0 if not provided
+      rating: 0 // Valor predeterminado del rating si no se proporciona
     };
-
+  
     const result = await createService(newService);
-
+  
     if (result) {
       Alert.alert('Éxito', 'Servicio creado exitosamente');
     } else {

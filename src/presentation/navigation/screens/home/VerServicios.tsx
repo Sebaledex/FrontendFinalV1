@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, StyleSheet, TextInput, Button, Modal, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, FlatList, StyleSheet, TextInput, Button, Modal, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
 import { usePostulacionStore } from '../../../store/usePostulacionStore';
 import { useServiceStore } from '../../../store/useServiceStore';
-import { CommentResponse } from '../../../../infrastucture/comment.response'; // Asegúrate de importar la interfaz CommentResponse
+import { CommentResponse } from '../../../../infrastucture/comment.response';
 
 export const VerServicios = () => {
   const { getall, getAvailableHours, getReviews } = useServiceStore();
@@ -21,7 +21,8 @@ export const VerServicios = () => {
   const [selectedHour, setSelectedHour] = useState<string | null>(null);
   const [comment, setComment] = useState<string>(''); 
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [comments, setComments] = useState<CommentResponse[]>([]); // Estado para almacenar comentarios
+  const [comments, setComments] = useState<CommentResponse[]>([]); 
+  const [showComments, setShowComments] = useState<boolean>(false); 
   const { create } = usePostulacionStore();
 
   useEffect(() => {
@@ -112,14 +113,19 @@ export const VerServicios = () => {
     }
   };
 
-  // Función para cargar comentarios
   const loadComments = async (serviceId: string) => {
     try {
-      const reviews = await getReviews(serviceId); // Asumiendo que getReviews devuelve los comentarios para un servicio
+      const reviews = await getReviews(serviceId);
       setComments(reviews || []);
+      setShowComments(true);
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
+  };
+
+  const closeComments = () => {
+    setShowComments(false);
+    setComments([]);
   };
 
   return (
@@ -158,6 +164,13 @@ export const VerServicios = () => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View style={styles.serviceItem}>
+              {item.fotos && item.fotos.length > 0 && (
+                <Image
+                  source={{ uri: item.fotos[0] }}
+                  style={styles.serviceImage}
+                  resizeMode="cover"
+                />
+              )}
               <View style={styles.serviceDetails}>
                 <Text style={styles.serviceName}>Servicio: {item.nombre}</Text>
                 <Text style={styles.serviceDescription}>Descripción: {item.descripcion}</Text>
@@ -218,62 +231,42 @@ export const VerServicios = () => {
               </View>
             )}
             {selectedHour && (
-              <>
-                <TextInput
-                  style={styles.commentInput}
-                  placeholder="Agregar un mensaje (máx 150 caracteres)"
-                  value={comment}
-                  onChangeText={setComment}
-                  maxLength={150}
-                />
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={handleConfirmReservation}
-                >
-                  <Text style={styles.confirmButtonText}>Tomar</Text>
-                </TouchableOpacity>
-              </>
+              <TextInput
+                style={styles.commentInput}
+                placeholder="Agregar comentario"
+                value={comment}
+                onChangeText={setComment}
+              />
             )}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <Button title="Confirmar" onPress={handleConfirmReservation} />
+              <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+            </View>
           </View>
         </View>
       </Modal>
 
-      {/* Mostrar comentarios */}
-      {comments.length > 0 && (
-        <Modal
-          visible={comments.length > 0}
-          transparent={true}
-          animationType="slide"
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Comentarios</Text>
-              <FlatList
-                data={comments}
-                keyExtractor={(item) => item._id.toString()}
-                renderItem={({ item }) => (
-                  <View style={styles.commentItem}>
-                    <Text style={styles.commentText}>{item.comentario}</Text>
-                    <Text style={styles.commentRating}>Rating: {item.rating}</Text>
-                  </View>
-                )}
-              />
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setComments([])}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </TouchableOpacity>
-            </View>
+      <Modal
+        visible={showComments}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Comentarios</Text>
+            <ScrollView>
+              {comments.map((comment) => (
+                <View key={comment._id} style={styles.commentContainer}>
+                  <Text style={styles.commentDate}>Fecha: {new Date(comment.fecha).toLocaleDateString()}</Text>
+                  <Text style={styles.commentText}>{comment.comentario}</Text>
+                  <Text style={styles.commentRating}>Rating: {comment.rating}</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <Button title="Cerrar" onPress={closeComments} />
           </View>
-        </Modal>
-      )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -281,46 +274,46 @@ export const VerServicios = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
   searchInput: {
-    marginBottom: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 8,
   },
   pickerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   filterText: {
     fontSize: 16,
+    fontWeight: 'bold',
   },
   picker: {
-    width: '45%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    flex: 1,
+    height: 40,
   },
   serviceItem: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    backgroundColor: '#f9f9f9',
     padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   serviceDetails: {
-    marginBottom: 10,
+    flex: 1,
+    marginLeft: 10,
   },
   serviceName: {
     fontSize: 18,
@@ -338,113 +331,90 @@ const styles = StyleSheet.create({
   serviceRating: {
     fontSize: 14,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  button: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  reserveButton: {
-    backgroundColor: '#2196F3', // Color azul para el botón "Reservar"
-  },
-  commentsButton: {
-    backgroundColor: '#2196F3', // Color azul para el botón "Comentarios"
-  },
-  buttonText: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#ffffff', // Color blanco para el texto de los botones
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  closeButton: {
-    backgroundColor: '#2196F3',
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    textAlign: 'center',
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  availableHours: {
-    marginTop: 10,
-  },
-  availableHour: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  selectedHour: {
-    backgroundColor: '#2196F3',
-    borderColor: '#2196F3',
-  },
-  confirmButton: {
-    backgroundColor: '#2196F3',
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 5,
-  },
-  confirmButtonText: {
-    textAlign: 'center',
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  commentItem: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  commentDate: {
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  commentText: {
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  commentRating: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
   noServices: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
   },
-  commentInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  button: {
     padding: 10,
-    marginTop: 10,
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  reserveButton: {
+    backgroundColor: 'blue',
+  },
+  commentsButton: {
+    backgroundColor: 'green',
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
+  availableHours: {
+    marginTop: 10,
+  },
+  availableHour: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  selectedHour: {
+    backgroundColor: 'lightblue',
+  },
+  commentInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: 10,
+    paddingHorizontal: 8,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  serviceImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 5,
+  },
+  commentContainer: {
+    marginBottom: 10,
+  },
+  commentDate: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  commentText: {
+    fontSize: 14,
+  },
+  commentRating: {
+    fontSize: 14,
+  },
 });
+
+export default VerServicios;
