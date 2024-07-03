@@ -108,7 +108,7 @@ export const VerServicios = () => {
         Alert.alert('Éxito', 'Reserva realizada con éxito');
         setModalVisible(false);
       } else {
-        Alert.alert('Error', 'Error al realizar la reserva seleccione en otro horario o fecha.');
+        Alert.alert('Error', 'Error al realizar la reserva seleccione en otro horario o Fecha.');
       }
     }
   };
