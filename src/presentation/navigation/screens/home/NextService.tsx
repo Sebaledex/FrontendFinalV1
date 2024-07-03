@@ -59,12 +59,13 @@ export const NextService = () => {
   const handleSeeMessages = async (serviceId: string) => {
     try {
       const messages = await seeMessage(serviceId);
+      console.log('messages:', messages);
       if (messages) {
         const formattedMessages = messages.map(msg => {
           if (msg.respuesta) {
             return `${msg.mensajeU}\nRespuesta: ${msg.respuesta}`;
           } else {
-            return `${msg.mensajeU}\nEl Dueño del aviso aún no responde a tu pregunta`;
+            return `${msg.mensajeU}\n`;
           }
         });
         setMessagesToShow(formattedMessages);

@@ -26,7 +26,10 @@ export const HomeScreenMine = ({ navigation }: Props) => {
         </Button>
         <Button style={styles.button} onPress={() => handleNavigate('CargarImagen')}>
           Cargar imagenes
-        </Button>        
+        </Button> 
+        <Button style={styles.button} onPress={() => handleNavigate('AnswerMessages')}>
+          responder preguntas
+        </Button>          
       </Layout>
 
       {/* Botones con íconos en la parte inferior */}

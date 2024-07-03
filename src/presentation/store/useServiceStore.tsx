@@ -27,6 +27,7 @@ export interface AuthState {
     getReviews: (serviceId: string) => Promise<false |CommentResponse[] | null>;
     sendMessage: (serviceId: string, message: string) => Promise<boolean>;
     seeMessage: (serviceId: string) => Promise<MessageResponse[]|null>;
+    answerMessage: (serviceId: string, message: string) => Promise<boolean>;
 
   }
 
@@ -227,6 +228,18 @@ getReviews: async (serviceId: string) => {
       return null;
     }
     return resp;
+  },
+
+  answerMessage : async (serviceId: string, message: string) => {
+    const { access_token,user } = useAuthStore.getState();
+    if (!access_token||!user) {
+      return false;
+    }
+    const resp = await serviceSendMessage(access_token, serviceId,user.id, message);
+    if (!resp) {
+      return false;
+    }
+    return true;
   },
   }));
 

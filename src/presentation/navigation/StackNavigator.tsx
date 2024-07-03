@@ -19,6 +19,7 @@ import { NextService } from './screens/home/NextService';
 import { PastService } from './screens/home/PastService';
 import MapScreen from './screens/map/MapScreen';
 import CargarImagen from './screens/home/CargarImagen ';
+import AnswerMessages from './screens/home/AnswerMessages';
 
 
 export type RootStackParams = {
@@ -41,7 +42,7 @@ export type RootStackParams = {
     PastService: undefined;
     MapScreen: undefined;
     CargarImagen: undefined;
-    
+    AnswerMessages: undefined;
 
   };
 
@@ -155,6 +156,11 @@ export type RootStackParams = {
           options={{cardStyleInterpolator: fadeAnimation}}
           name="CargarImagen"
           component={CargarImagen}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="AnswerMessages"
+          component={AnswerMessages}
         />
       </Stack.Navigator>
     );

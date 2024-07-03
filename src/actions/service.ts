@@ -241,10 +241,10 @@ export const serviceGetcomments = async (access_token: string, serviceId: string
   }
 };
 
-  export const serviceSendMessage = async (access_token: string, serviceId: string,userId:string, message: string) => {
+  export const serviceSendMessage = async (access_token: string, serviceId: string,userId:string, mensajeU: string) => {
     try {
       const { data } = await serviceAxiosApi.post(`/v2/service/${serviceId}/Chats/${userId}`, {
-        message,
+        mensajeU,
       }, {
         headers: {
           'Authorization': `Bearer ${access_token}`
@@ -267,6 +267,28 @@ export const serviceGetcomments = async (access_token: string, serviceId: string
       return data;
     } catch (error) {
       console.error('Error fetching chats:', error);
+      return null;
+    }
+  };
+
+  export const serviceAnswerMessage = async (
+    access_token: string, serviceId: string, 
+    ChatId: string, respuesta: string
+    ,UserId:string, mensajeU:string
+  ) => {
+    try {
+      const { data } = await serviceAxiosApi.put(`/v2/service/${serviceId}/Chats/${ChatId}`, {
+        respuesta,
+        UserId,
+        mensajeU,        
+      }, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Error answering message:', error);
       return null;
     }
   };
