@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, StyleSheet, Button } from 'react-native';
+import { Text, View, FlatList, StyleSheet, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 import { usePostulacionStore } from '../../../store/usePostulacionStore';
 import { useServiceStore } from '../../../store/useServiceStore';
 import { PostulacionResponse } from '../../../../infrastucture/postulacion.response';
 
 export const NextService = () => {
   const { getbyuser } = usePostulacionStore();
-  const { getbyServiceId } = useServiceStore();
+  const { getbyServiceId, sendMessage, seeMessage } = useServiceStore();
   const [postulaciones, setPostulaciones] = useState<PostulacionResponse[]>([]);
   const [serviceNames, setServiceNames] = useState<{ [key: string]: string }>({});
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>('');
+  const [messagesToShow, setMessagesToShow] = useState<string[]>([]);
+  const [isViewingMessages, setIsViewingMessages] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchPostulaciones = async () => {
@@ -47,17 +50,63 @@ export const NextService = () => {
     fetchPostulaciones();
   }, [getbyuser, getbyServiceId]);
 
-  const handleReserve = (serviceId: string) => {
+  const handleMessage = (serviceId: string) => {
     setSelectedService(serviceId);
+    setIsViewingMessages(false);
     setModalVisible(true);
+  };
+
+  const handleSeeMessages = async (serviceId: string) => {
+    try {
+      const messages = await seeMessage(serviceId);
+      if (messages) {
+        const formattedMessages = messages.map(msg => {
+          if (msg.respuesta) {
+            return `${msg.mensajeU}\nRespuesta: ${msg.respuesta}`;
+          } else {
+            return `${msg.mensajeU}\nEl Dueño del aviso aún no responde a tu pregunta`;
+          }
+        });
+        setMessagesToShow(formattedMessages);
+        setSelectedService(serviceId);
+        setIsViewingMessages(true);
+        setModalVisible(true);
+      } else {
+        Alert.alert('Error', 'No se pudieron obtener los mensajes anteriores');
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      Alert.alert('Error', 'Ha ocurrido un error al obtener los mensajes anteriores');
+    }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  const handleSendMessage = async () => {
+    if (!selectedService || !message.trim()) {
+      Alert.alert('Error', 'Por favor, ingresa un mensaje válido.');
+      return;
+    }
+
+    try {
+      const success = await sendMessage(selectedService, message);
+      if (success) {
+        setModalVisible(false);
+        setMessage('');
+        Alert.alert('Éxito', 'Mensaje enviado con éxito');
+      } else {
+        Alert.alert('Error', 'No se pudo enviar el mensaje');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error); // Loguea el error para depuración
+      Alert.alert('Error', 'Ha ocurrido un error al enviar el mensaje');
+    }
   };
 
   return (
@@ -69,15 +118,23 @@ export const NextService = () => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View style={styles.postulacionItem}>
-              <View style={styles.postulacionDetails}>
-                <Text style={styles.postulacionName}>Tu servicio: {serviceNames[item.servicioId] || 'Cargando...'}</Text>
-                <Text style={styles.postulacionMessage}>llegara a las: {item.horarioSolicitado}</Text>
-                <Text style={styles.postulacionMessage}>del dia: {formatDate(item.fechaSolicitada)}</Text>
+              <Text style={styles.postulacionName}>Tu servicio: {serviceNames[item.servicioId] || 'Cargando...'}</Text>
+              <Text style={styles.postulacionMessage}>Llegará a las: {item.horarioSolicitado}</Text>
+              <Text style={styles.postulacionMessage}>Del día: {formatDate(item.fechaSolicitada)}</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.sendMessageButton]}
+                  onPress={() => handleMessage(item.servicioId)}
+                >
+                  <Text style={styles.buttonText}>Enviar mensaje</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.seeMessagesButton]}
+                  onPress={() => handleSeeMessages(item.servicioId)}
+                >
+                  <Text style={styles.buttonText}>Ver mensajes</Text>
+                </TouchableOpacity>
               </View>
-              <Button
-                title="Chatear"
-                onPress={() => handleReserve(item._id)}
-              />
             </View>
           )}
         />
@@ -85,15 +142,62 @@ export const NextService = () => {
         <Text style={styles.noPostulaciones}>No hay reservas disponibles</Text>
       )}
 
-      {modalVisible && (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
-          <Text>Modal para reservar servicio</Text>
-          <Button
-            title="Cerrar"
-            onPress={() => setModalVisible(false)}
-          />
+          <View style={styles.modalContent}>
+            {isViewingMessages ? (
+              <>
+                <Text style={styles.modalTitle}>Mensajes</Text>
+                <FlatList
+                  data={messagesToShow}
+                  renderItem={({ item }) => (
+                    <View style={styles.messageContainer}>
+                      <Text style={styles.messageText}>{item}</Text>
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+                <TouchableOpacity
+                  style={[styles.button, styles.cancelButton]}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.buttonText}>Cerrar</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <Text style={styles.modalTitle}>Enviar Mensaje al Dueño</Text>
+                <TextInput
+                  style={styles.input}
+                  multiline
+                  placeholder="Escribe tu mensaje aquí..."
+                  value={message}
+                  onChangeText={(text) => setMessage(text)}
+                />
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.sendMessageButton]}
+                    onPress={handleSendMessage}
+                  >
+                    <Text style={styles.buttonText}>Enviar Mensaje</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.cancelButton]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 };
@@ -114,21 +218,36 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     borderRadius: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  postulacionDetails: {
-    flex: 1,
-    marginRight: 10,
   },
   postulacionName: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   postulacionMessage: {
     fontSize: 14,
-    marginTop: 5,
+    marginBottom: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '48%',
+  },
+  sendMessageButton: {
+    backgroundColor: '#2196F3',
+  },
+  seeMessagesButton: {
+    backgroundColor: '#2196F3', // Mismo color para ambos botones
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#ffffff',
   },
   noPostulaciones: {
     fontSize: 16,
@@ -140,5 +259,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    width: '100%',
+    minHeight: 100,
+  },
+  messageContainer: {
+    marginBottom: 10,
+  },
+  messageText: {
+    fontSize: 14,
+  },
+  cancelButton: {
+    marginTop: 10,
+    backgroundColor: '#f44336', // Color de botón cancelar
   },
 });
+
+export default NextService;

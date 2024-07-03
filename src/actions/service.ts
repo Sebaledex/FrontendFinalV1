@@ -1,6 +1,7 @@
 import { serviceAxiosApi } from "../config/api/serviceAxiosApi";
 import { Service } from "../domain/entities/service.entity";
 import { CommentResponse } from "../infrastucture/comment.response";
+import { MessageResponse } from "../infrastucture/message.response";
 import { ServiceResponse } from "../infrastucture/service.response";
 
 const returnServiceToken = ( data: ServiceResponse ) => {
@@ -239,3 +240,33 @@ export const serviceGetcomments = async (access_token: string, serviceId: string
     return null;
   }
 };
+
+  export const serviceSendMessage = async (access_token: string, serviceId: string,userId:string, message: string) => {
+    try {
+      const { data } = await serviceAxiosApi.post(`/v2/service/${serviceId}/Chats/${userId}`, {
+        message,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return null;
+    }
+  };
+
+  export const serviceSeeMessage = async (access_token: string, serviceId: string) => {
+    try {
+      const { data } = await serviceAxiosApi.get<MessageResponse[]>(`/v2/service/Chats/${serviceId}`, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+      return null;
+    }
+  };

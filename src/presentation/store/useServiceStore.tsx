@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { Service } from "../../domain/entities/service.entity";
-import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetAvailableHours, serviceGetById, serviceGetByServiceId, serviceGetByUser, serviceGetcomments, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate, servicereviewService } from "../../actions/service";
+import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetAvailableHours, serviceGetById, serviceGetByServiceId, serviceGetByUser, serviceGetcomments, serviceMonthlySales, serviceSeeMessage, serviceSendMessage, serviceTopServices, serviceTopServicesAll, serviceUpdate, servicereviewService } from "../../actions/service";
 import { User } from "../../domain/entities/user.entity";
 import { ServiceResponse } from "../../infrastucture/service.response";
 import { useAuthStore } from "./auth/useAuthStore";
 import { CommentResponse } from "../../infrastucture/comment.response";
+import { MessageResponse } from "../../infrastucture/message.response";
 
 export interface AuthState {
     access_token?: string;
@@ -24,6 +25,8 @@ export interface AuthState {
     getbyServiceId: (serviceId: string) => Promise<false |ServiceResponse | null>;
     doReview: (serviceId: string, rating: number,comentario:string) => Promise<boolean>;
     getReviews: (serviceId: string) => Promise<false |CommentResponse[] | null>;
+    sendMessage: (serviceId: string, message: string) => Promise<boolean>;
+    seeMessage: (serviceId: string) => Promise<MessageResponse[]|null>;
 
   }
 
@@ -201,5 +204,29 @@ getReviews: async (serviceId: string) => {
     }
     return resp;
 },
+ 
+  sendMessage: async (serviceId: string, message: string) => {
+    const { access_token,user } = useAuthStore.getState();
+    if (!access_token||!user) {
+      return false;
+    }
+    const resp = await serviceSendMessage(access_token, serviceId,user.id, message);
+    if (!resp) {
+      return false;
+    }
+    return true;
+  },
+
+  seeMessage : async (serviceId: string) => {
+    const { access_token } = useAuthStore.getState();
+    if (!access_token) {
+      return null;
+    }
+    const resp = await serviceSeeMessage(access_token, serviceId);
+    if (!resp) {
+      return null;
+    }
+    return resp;
+  },
   }));
 
