@@ -1,5 +1,6 @@
 import React from 'react';
 import { StackCardStyleInterpolator, createStackNavigator } from '@react-navigation/stack';
+import { StackCardStyleInterpolator, createStackNavigator } from '@react-navigation/stack';
 import { LoginScreen } from './screens/auth/LoginScreen';
 import { LoadingScreen } from './screens/loading/LoadingScreen';
 import { RegisterScreen } from './screens/auth/RegisterScreen';

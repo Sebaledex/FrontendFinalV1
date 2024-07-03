@@ -5,6 +5,11 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from "@react-navigation/native";
 import { StackNavigator } from './presentation/navigation/StackNavigator';
 import { useColorScheme } from 'react-native';
+import { PermissionsChecker } from './presentation/providers/PermissionsChecker';
+import enableLatestRenderer from "react-native-maps"
+
+
+enableLatestRenderer
 
 export const ServicesApp = () => {
 
@@ -32,7 +37,9 @@ export const ServicesApp = () => {
                         notification: theme['color-primary-500'],
                     },
                 }}>
-                    <StackNavigator/>
+                    <PermissionsChecker>
+                        <StackNavigator/>
+                    </PermissionsChecker>
                 </NavigationContainer>
             </ApplicationProvider>
         </>
