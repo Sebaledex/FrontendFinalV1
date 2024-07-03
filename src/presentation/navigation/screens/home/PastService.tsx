@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, StyleSheet, Button, TextInput, Alert } from 'react-native';
+import { Text, View, FlatList, StyleSheet, Button, TextInput, Alert, TouchableOpacity, Modal } from 'react-native';
 import { usePostulacionStore } from '../../../store/usePostulacionStore';
 import { useServiceStore } from '../../../store/useServiceStore';
 import { PostulacionResponse } from '../../../../infrastucture/postulacion.response';
@@ -52,7 +52,6 @@ export const PastService = () => {
   }, [getbyuser, getbyServiceId]);
 
   const handleReserve = (serviceId: string) => {
-    console.log('Calificar servicio:', serviceId);
     setSelectedService(serviceId);
     setModalVisible(true);
   };
@@ -70,20 +69,15 @@ export const PastService = () => {
       Alert.alert('Error', 'Por favor, ingresa una calificación válida (0-5) y un comentario.');
       return;
     }
-    console.log('Enviando reseña:', selectedService, rating, comentario);
 
     const success = await doReview(selectedService, rating, comentario);
     if (success) {
-      // Manejar éxito
-      console.log('Reseña enviada con éxito');
       setModalVisible(false);
       setRating(0); // Reiniciar rating después de enviar la reseña
       setComentario(''); // Reiniciar comentario después de enviar la reseña
       Alert.alert('Éxito', 'Reseña enviada con éxito');
     } else {
-      // Manejar fallo
-      console.error('Error al enviar la reseña');
-        Alert.alert('Error', 'Ha ocurrido un error al enviar la reseña');
+      Alert.alert('Error', 'Ha ocurrido un error al enviar la reseña');
     }
   };
 
@@ -94,6 +88,48 @@ export const PastService = () => {
     }
     setRating(Math.max(0, Math.min(5, value)));
   };
+
+  const renderCommentModal = () => (
+    <Modal
+      visible={modalVisible}
+      transparent={true}
+      animationType="fade"
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Deja tu calificación</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Rating (0-5)"
+            keyboardType="numeric"
+            value={rating.toString()}
+            onChangeText={handleRatingChange}
+          />
+          <TextInput
+            style={[styles.input, styles.commentInput]}
+            placeholder="Comentario"
+            multiline
+            value={comentario}
+            onChangeText={(text) => setComentario(text)}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.submitButton]}
+              onPress={submitReview}
+            >
+              <Text style={styles.buttonText}>Enviar Reseña</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
 
   return (
     <View style={styles.container}>
@@ -120,33 +156,7 @@ export const PastService = () => {
         <Text style={styles.noPostulaciones}>No hay servicios pasados disponibles</Text>
       )}
 
-      {modalVisible && (
-        <View style={styles.modalContainer}>
-          <Text>Deja tu calificación</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Rating (0-5)"
-            keyboardType="numeric"
-            value={rating.toString()}
-            onChangeText={handleRatingChange}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Comentario"
-            multiline
-            value={comentario}
-            onChangeText={(text) => setComentario(text)}
-          />
-          <Button
-            title="Enviar Reseña"
-            onPress={submitReview}
-          />
-          <Button
-            title="Cerrar"
-            onPress={() => setModalVisible(false)}
-          />
-        </View>
-      )}
+      {modalVisible && renderCommentModal()}
     </View>
   );
 };
@@ -195,12 +205,49 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 20,
   },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   input: {
-    width: '100%',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+  },
+  commentInput: {
+    height: 100, // Ajustar altura del campo de comentario
+    textAlignVertical: 'top', // Alinear texto al principio del campo
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '48%', // Ajustar ancho de los botones
+  },
+  submitButton: {
+    backgroundColor: '#2196F3',
+  },
+  cancelButton: {
+    backgroundColor: '#f0f0f0',
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#ffffff',
   },
 });

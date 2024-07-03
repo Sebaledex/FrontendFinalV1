@@ -5,9 +5,10 @@ import { Picker } from '@react-native-picker/picker';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
 import { usePostulacionStore } from '../../../store/usePostulacionStore';
 import { useServiceStore } from '../../../store/useServiceStore';
+import { CommentResponse } from '../../../../infrastucture/comment.response'; // Asegúrate de importar la interfaz CommentResponse
 
 export const VerServicios = () => {
-  const { getall, getAvailableHours } = useServiceStore();
+  const { getall, getAvailableHours, getReviews } = useServiceStore();
   const [services, setServices] = useState<ServiceResponse[]>([]);
   const [filteredServices, setFilteredServices] = useState<ServiceResponse[]>([]);
   const [filter, setFilter] = useState<string>('none');
@@ -20,6 +21,7 @@ export const VerServicios = () => {
   const [selectedHour, setSelectedHour] = useState<string | null>(null);
   const [comment, setComment] = useState<string>(''); 
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [comments, setComments] = useState<CommentResponse[]>([]); // Estado para almacenar comentarios
   const { create } = usePostulacionStore();
 
   useEffect(() => {
@@ -110,6 +112,16 @@ export const VerServicios = () => {
     }
   };
 
+  // Función para cargar comentarios
+  const loadComments = async (serviceId: string) => {
+    try {
+      const reviews = await getReviews(serviceId); // Asumiendo que getReviews devuelve los comentarios para un servicio
+      setComments(reviews || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ver Servicios</Text>
@@ -153,10 +165,20 @@ export const VerServicios = () => {
                 <Text style={styles.serviceContact}>Contacto: {item.contacto}</Text>
                 <Text style={styles.serviceRating}>Rating: {item.rating}</Text>
               </View>
-              <Button
-                title="Reservar"
-                onPress={() => handleReserve(item._id)}
-              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.reserveButton]}
+                  onPress={() => handleReserve(item._id)}
+                >
+                  <Text style={styles.buttonText}>Reservar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.commentsButton]}
+                  onPress={() => loadComments(item._id)}
+                >
+                  <Text style={styles.buttonText}>Comentarios</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -221,6 +243,37 @@ export const VerServicios = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Mostrar comentarios */}
+      {comments.length > 0 && (
+        <Modal
+          visible={comments.length > 0}
+          transparent={true}
+          animationType="slide"
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Comentarios</Text>
+              <FlatList
+                data={comments}
+                keyExtractor={(item) => item._id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.commentItem}>
+                    <Text style={styles.commentText}>{item.comentario}</Text>
+                    <Text style={styles.commentRating}>Rating: {item.rating}</Text>
+                  </View>
+                )}
+              />
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setComments([])}
+              >
+                <Text style={styles.closeButtonText}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -228,47 +281,46 @@ export const VerServicios = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   searchInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
     marginBottom: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   pickerContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   filterText: {
     fontSize: 16,
-    marginRight: 10,
   },
   picker: {
-    height: 50,
-    flex: 1,
+    width: '45%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   serviceItem: {
-    backgroundColor: '#f9f9f9',
-    padding: 15,
-    marginVertical: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    padding: 10,
   },
   serviceDetails: {
-    flex: 1,
-    marginRight: 10,
+    marginBottom: 10,
   },
   serviceName: {
     fontSize: 18,
@@ -276,82 +328,123 @@ const styles = StyleSheet.create({
   },
   serviceDescription: {
     fontSize: 14,
-    marginTop: 5,
   },
   servicePrice: {
     fontSize: 14,
-    marginTop: 5,
   },
   serviceContact: {
     fontSize: 14,
-    marginTop: 5,
   },
   serviceRating: {
     fontSize: 14,
-    marginTop: 5,
   },
-  noServices: {
-    fontSize: 16,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  reserveButton: {
+    backgroundColor: '#2196F3', // Color azul para el botón "Reservar"
+  },
+  commentsButton: {
+    backgroundColor: '#2196F3', // Color azul para el botón "Comentarios"
+  },
+  buttonText: {
+    fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 20,
+    color: '#ffffff', // Color blanco para el texto de los botones
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    width: '80%',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  availableHours: {
-    width: '100%',
-    marginTop: 20,
-  },
-  availableHour: {
-    fontSize: 16,
-    paddingVertical: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  selectedHour: {
-    backgroundColor: '#e0e0e0',
-  },
-  commentInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginTop: 20,
-    width: '100%',
-  },
-  confirmButton: {
-    marginTop: 20,
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
   closeButton: {
+    backgroundColor: '#2196F3',
     marginTop: 10,
-    backgroundColor: '#ccc',
-    padding: 10,
+    paddingVertical: 10,
     borderRadius: 5,
   },
   closeButtonText: {
+    textAlign: 'center',
+    color: '#ffffff',
     fontWeight: 'bold',
+  },
+  availableHours: {
+    marginTop: 10,
+  },
+  availableHour: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  selectedHour: {
+    backgroundColor: '#2196F3',
+    borderColor: '#2196F3',
+  },
+  confirmButton: {
+    backgroundColor: '#2196F3',
+    marginTop: 10,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  confirmButtonText: {
+    textAlign: 'center',
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  commentItem: {
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  commentDate: {
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  commentText: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  commentRating: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  noServices: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
 });

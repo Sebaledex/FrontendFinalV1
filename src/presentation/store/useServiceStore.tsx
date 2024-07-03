@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { Service } from "../../domain/entities/service.entity";
-import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetAvailableHours, serviceGetById, serviceGetByServiceId, serviceGetByUser, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate, servicereviewService } from "../../actions/service";
+import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetAvailableHours, serviceGetById, serviceGetByServiceId, serviceGetByUser, serviceGetcomments, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate, servicereviewService } from "../../actions/service";
 import { User } from "../../domain/entities/user.entity";
 import { ServiceResponse } from "../../infrastucture/service.response";
 import { useAuthStore } from "./auth/useAuthStore";
+import { CommentResponse } from "../../infrastucture/comment.response";
 
 export interface AuthState {
     access_token?: string;
@@ -22,6 +23,7 @@ export interface AuthState {
     topServices: () => Promise<ServiceResponse[] | null>;
     getbyServiceId: (serviceId: string) => Promise<false |ServiceResponse | null>;
     doReview: (serviceId: string, rating: number,comentario:string) => Promise<boolean>;
+    getReviews: (serviceId: string) => Promise<false |CommentResponse[] | null>;
 
   }
 
@@ -187,7 +189,17 @@ export interface AuthState {
     return true
 },
 
-
-
-}))
+getReviews: async (serviceId: string) => {
+    const { access_token } = useAuthStore.getState();
+    if (!access_token) {
+        return null;
+    }
+    const resp = await serviceGetcomments( access_token,serviceId);
+    console.log({"store":resp})
+    if (!resp) {
+        return null;
+    }
+    return resp;
+},
+  }));
 

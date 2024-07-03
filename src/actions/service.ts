@@ -1,5 +1,6 @@
 import { serviceAxiosApi } from "../config/api/serviceAxiosApi";
 import { Service } from "../domain/entities/service.entity";
+import { CommentResponse } from "../infrastucture/comment.response";
 import { ServiceResponse } from "../infrastucture/service.response";
 
 const returnServiceToken = ( data: ServiceResponse ) => {
@@ -212,6 +213,21 @@ export const servicereviewService = async (access_token: string, serviceId: stri
       comentario,
       fecha
     }, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos del servicio por ID",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching service by id:', error);
+    return null;
+  }
+};
+
+export const serviceGetcomments = async (access_token: string, serviceId: string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<CommentResponse[]>(`/v2/service/reviews/${serviceId}`, {
       headers: {
         'Authorization': `Bearer ${access_token}`
       }
