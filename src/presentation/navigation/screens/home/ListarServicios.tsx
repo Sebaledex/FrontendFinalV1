@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Layout, List, ListItem, Text } from '@ui-kitten/components';
 import { Alert } from 'react-native';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
 import { useAuthStore } from '../../../store/auth/useAuthStore';
+import { useServiceStore } from '../../../store/useServiceStore';
 
 export const ListarServicios = () => {
   const [servicios, setServicios] = useState<ServiceResponse[]>([]);

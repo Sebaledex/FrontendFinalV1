@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, FlatList, StyleSheet, TextInput, Button, Modal, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
 import { Picker } from '@react-native-picker/picker';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
 import { usePostulacionStore } from '../../../store/usePostulacionStore';
+import { useServiceStore } from '../../../store/useServiceStore';
 
 export const VerServicios = () => {
   const { getall, getAvailableHours } = useServiceStore();

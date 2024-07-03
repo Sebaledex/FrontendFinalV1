@@ -1,10 +1,9 @@
 import { create } from "zustand";
-import { User } from "../../../domain/entities/user.entity";
-import { useAuthStore } from "./useAuthStore";
-import { ServiceResponse } from "../../../infrastucture/service.response";
-import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetByUser, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate } from "../../../actions/service";
-import { serviceGetAvailableHours } from "../../../actions/service";
-import { Service } from "../../../domain/entities/service.entity";
+import { Service } from "../../domain/entities/service.entity";
+import { ServicetotalSales, serviceAnnualSales, serviceCreate, serviceDelete, serviceGetAll, serviceGetAvailableHours, serviceGetById, serviceGetByServiceId, serviceGetByUser, serviceMonthlySales, serviceTopServices, serviceTopServicesAll, serviceUpdate, servicereviewService } from "../../actions/service";
+import { User } from "../../domain/entities/user.entity";
+import { ServiceResponse } from "../../infrastucture/service.response";
+import { useAuthStore } from "./auth/useAuthStore";
 
 export interface AuthState {
     access_token?: string;
@@ -21,6 +20,8 @@ export interface AuthState {
     annualSales: (serviceId: string) => Promise<{ year: number; total: number }[] | null>;
     top5Services: () => Promise<false |ServiceResponse[] | null>;
     topServices: () => Promise<ServiceResponse[] | null>;
+    getbyServiceId: (serviceId: string) => Promise<false |ServiceResponse | null>;
+    doReview: (serviceId: string, rating: number,comentario:string) => Promise<boolean>;
 
   }
 
@@ -159,5 +160,34 @@ export interface AuthState {
           return resp
       
       },
-  }))
+
+      getbyServiceId: async (serviceId:string) => {
+          const { access_token } = useAuthStore.getState();
+          if (!access_token) {
+              return null;
+          }
+          const resp = await serviceGetByServiceId( access_token,serviceId);
+          console.log({"store":resp})
+          if (!resp) {
+              return null;
+          }
+          return resp
+  },
+
+  doReview: async (serviceId: string, rating: number,comentario:string) => {
+    const { access_token,user } = useAuthStore.getState();
+    if (!access_token||!user) {
+        return false;
+    }
+    const resp = await servicereviewService( access_token,serviceId,user.id,rating,comentario,new Date());
+    console.log({"store":resp})
+    if (!resp) {
+        return false;
+    }
+    return true
+},
+
+
+
+}))
 

@@ -3,8 +3,8 @@ import { Layout, Text, Button, Select, SelectItem, IndexPath } from '@ui-kitten/
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParams } from '../../StackNavigator';
 import { StyleSheet, View } from 'react-native';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
+import { useServiceStore } from '../../../store/useServiceStore';
 
 type Props = StackScreenProps<RootStackParams, 'Reportes'>;
 

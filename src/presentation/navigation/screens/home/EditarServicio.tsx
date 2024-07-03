@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Input, Layout, List, ListItem, Text } from '@ui-kitten/components';
 import { Alert } from 'react-native';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
 import { useAuthStore } from '../../../store/auth/useAuthStore';
 import { Service } from '../../../../domain/entities/service.entity';
+import { useServiceStore } from '../../../store/useServiceStore';
 
 export const EditarServicio = () => {
   const [servicios, setServicios] = useState<ServiceResponse[]>([]);

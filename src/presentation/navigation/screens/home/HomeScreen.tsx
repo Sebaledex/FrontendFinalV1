@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Layout, Text, Icon } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
 import { Props } from '@ui-kitten/components/devsupport/services/props/props.service';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
+import { useServiceStore } from '../../../store/useServiceStore';
+import { useFocusEffect } from '@react-navigation/native';
 import { ServiceResponse } from '../../../../infrastucture/service.response';
 
 export const HomeScreen = ({ navigation }: Props) => {
   const { topServices } = useServiceStore();
   const [services, setTopServices] = useState<ServiceResponse[] | null>(null); // Estado para almacenar los servicios principales
 
-  useEffect(() => {
-    const fetchTopServices = async () => {
-      try {
-        const data = await topServices();
-        setTopServices(data || null); // Asegúrate de manejar el caso de null si no hay datos
-        console.log('Servicios principales:', data);
-      } catch (error) {
-        console.error('Error fetching top services:', error);
-      }
-    };
+  const fetchTopServices = async () => {
+    try {
+      const data = await topServices();
+      setTopServices(data || null); // Asegúrate de manejar el caso de null si no hay datos
+    } catch (error) {
+      console.error('Error fetching top services:', error);
+    }
+  };
 
-    fetchTopServices();
-  }, [topServices]); // Ejecutar cuando topServices cambie
+  useFocusEffect(
+    useCallback(() => {
+      fetchTopServices();
+    }, [])
+  );
 
   const handleNavigate = (screenName: string) => {
     navigation.navigate(screenName); // Navega a la pantalla especificada
@@ -54,7 +56,10 @@ export const HomeScreen = ({ navigation }: Props) => {
       <Layout style={styles.bottomSection}>
         <Button
           style={styles.iconButton}
-          onPress={() => handleNavigate('HomeScreen')}
+          onPress={() => {
+            fetchTopServices();
+            handleNavigate('HomeScreen');
+          }}
           accessoryLeft={(props) => <Icon {...props} name='home-outline' />}
           appearance='ghost'
           size='small'
@@ -72,7 +77,7 @@ export const HomeScreen = ({ navigation }: Props) => {
         </Button>
         <Button
           style={styles.iconButton}
-          onPress={() => handleNavigate('Pedidos')}
+          onPress={() => handleNavigate('HomeServicesTaken')}
           accessoryLeft={(props) => <Icon {...props} name='bulb-outline' />}
           appearance='ghost'
           size='small'

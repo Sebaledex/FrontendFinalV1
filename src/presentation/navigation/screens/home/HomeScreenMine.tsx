@@ -48,7 +48,7 @@ export const HomeScreenMine = ({ navigation }: Props) => {
         </Button>
         <Button
           style={styles.iconButton}
-          onPress={() => handleNavigate('Pedidos')}
+          onPress={() => handleNavigate('HomeServicesTaken')}
           accessoryLeft={(props) => <Icon {...props} name='bulb-outline' />}
           appearance='ghost' // Añade esta línea para reducir el tamaño del texto
           size='small' // Ajusta el tamaño del ícono

@@ -1,6 +1,5 @@
 export interface PostulacionResponse {
     message: string;
-    Postulacion: {
         servicioId: string;
         usuarioId: string;
         mensaje: string;
@@ -10,5 +9,4 @@ export interface PostulacionResponse {
         createdAt: string;
         updatedAt: string;
         __v: number;
-    };
 }

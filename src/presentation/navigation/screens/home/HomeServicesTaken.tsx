@@ -1,17 +1,9 @@
 import React from 'react';
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import { useAuthStore } from '../../../store/auth/useAuthStore';
+import { Button, Layout, Text, Icon } from '@ui-kitten/components';
 import { Props } from '@ui-kitten/components/devsupport/services/props/props.service';
 import { StyleSheet, ViewStyle } from 'react-native';
 
-export const HomeScreenOther = ({ navigation }: Props) => {
-  const { logout } = useAuthStore();
-
-  const handleLogout = async () => {
-    logout();
-    navigation.navigate('LoginScreen');
-  };
-
+export const HomeServicesTaken = ({ navigation }: Props) => {
   const handleNavigate = (screenName: string) => {
     navigation.navigate(screenName); // Navigate to the specified screen
   };
@@ -19,19 +11,12 @@ export const HomeScreenOther = ({ navigation }: Props) => {
   return (
     <Layout style={styles.container}>
       <Layout style={styles.section}>
-        <Text category='h5'>Otras Funcionalidades</Text>
-        <Button style={styles.button} onPress={() => handleNavigate('GPSView')}>
-          GPS View
+        <Text category='h5'>Administrar Mis Servicios</Text>
+        <Button style={styles.button} onPress={() => handleNavigate('NextService')}>
+          Servicios por Cumplir
         </Button>
-        <Button style={styles.button} onPress={() => handleNavigate('MapScreen')}>
-          GPSTracker
-        </Button>
-        <Button
-          style={styles.button}
-          accessoryLeft={(props) => <Icon {...props} name='log-out-outline' />}
-          onPress={handleLogout}
-        >
-          Cerrar sesión
+        <Button style={styles.button} onPress={() => handleNavigate('PastService')}>
+          Calificar Servicios
         </Button>
       </Layout>
 
@@ -74,7 +59,6 @@ export const HomeScreenOther = ({ navigation }: Props) => {
           Más Opciones
         </Button>
       </Layout>
-      
     </Layout>
   );
 };
@@ -112,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreenOther;
+export default HomeServicesTaken;

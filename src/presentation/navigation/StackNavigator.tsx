@@ -14,6 +14,9 @@ import { ListarServicios } from './screens/home/ListarServicios';
 import {HomeScreenMine} from './screens/home/HomeScreenMine';
 import {HomeScreenOther} from './screens/home/HomeScreenOther';
 import HomeScreen from './screens/home/HomeScreen';
+import { HomeServicesTaken } from './screens/home/HomeServicesTaken';
+import { NextService } from './screens/home/NextService';
+import { PastService } from './screens/home/PastService';
 import MapScreen from './screens/map/MapScreen';
 
 
@@ -32,6 +35,9 @@ export type RootStackParams = {
     ListarServicios: undefined;
     HomeScreenMine: undefined;
     HomeScreenOther: undefined;
+    HomeServicesTaken: undefined;
+    NextService: undefined;
+    PastService: undefined;
     MapScreen: undefined;
     
 
@@ -122,6 +128,21 @@ export type RootStackParams = {
           options={{cardStyleInterpolator: fadeAnimation}}
           name="HomeScreenOther"
           component={HomeScreenOther}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="HomeServicesTaken"
+          component={HomeServicesTaken}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="NextService"
+          component={NextService}
+        />
+        <Stack.Screen
+          options={{cardStyleInterpolator: fadeAnimation}}
+          name="PastService"
+          component={PastService}
         />
         <Stack.Screen
           options={{cardStyleInterpolator: fadeAnimation}}

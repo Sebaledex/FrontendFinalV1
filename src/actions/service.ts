@@ -189,3 +189,37 @@ export const serviceTopServicesAll= async (access_token: string) => {
     return null;
   }
 };
+
+export const serviceGetByServiceId = async (access_token: string, serviceId: string) => {
+  try {
+    const { data } = await serviceAxiosApi.get<ServiceResponse>(`/v2/service/${serviceId}`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos del servicio por ID",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching service by id:', error);
+    return null;
+  }
+};
+
+export const servicereviewService = async (access_token: string, serviceId: string,userId:string, rating:number,comentario:string,fecha:Date) => {
+  try {
+    const { data } = await serviceAxiosApi.post<ServiceResponse>(`/v2/service/${serviceId}/reviews/${userId}`,{
+      rating,
+      comentario,
+      fecha
+    }, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    console.log("datos del servicio por ID",data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching service by id:', error);
+    return null;
+  }
+};

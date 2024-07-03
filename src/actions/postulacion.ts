@@ -6,17 +6,15 @@ const returnPostulacionToken = ( data: PostulacionResponse ) => {
 
     return {
       message: data.message,
-      Postulacion: {
-        servicioId: data.Postulacion.servicioId,
-        usuarioId: data.Postulacion.usuarioId,
-        mensaje: data.Postulacion.mensaje,
-        fechaSolicitada: data.Postulacion.fechaSolicitada,
-        horarioSolicitado: data.Postulacion.horarioSolicitado,
-        _id: data.Postulacion._id,
-        createdAt: data.Postulacion.createdAt,
-        updatedAt: data.Postulacion.updatedAt,
-        __v: data.Postulacion.__v
-      }
+        servicioId: data.servicioId,
+        usuarioId: data.usuarioId,
+        mensaje: data.mensaje,
+        fechaSolicitada: data.fechaSolicitada,
+        horarioSolicitado: data.horarioSolicitado,
+        _id: data._id,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        __v: data.__v
     };
   }
   export const postulacionCreate = async (access_token:string,userId:string,serviceId:string,fechaSolicitada:Date,horarioSolicitado:string,mensaje:string) => {
@@ -33,6 +31,33 @@ const returnPostulacionToken = ( data: PostulacionResponse ) => {
       });
       return data;
     }catch (error: any) {
+      if (error.response) {
+        // El servidor respondió con un código de estado fuera del rango 2xx
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+      } else if (error.request) {
+        // La solicitud se hizo pero no se recibió respuesta
+        console.error('Error request:', error.request);
+      } else {
+        // Algo sucedió al configurar la solicitud que desencadenó un error
+        console.error('Error message:', error.message);
+      }
+      return null;
+    }
+  };
+
+  export const postulacionGetByUser = async (userId:string,access_token:string) => {
+    try {
+      const { data } = await serviceAxiosApi.get<PostulacionResponse[]>(`/v2/postulacion/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      console.log('Postulaciones EN ACTION :', data);
+      return data;
+    }
+    catch (error: any) {
       if (error.response) {
         // El servidor respondió con un código de estado fuera del rango 2xx
         console.error('Error response data:', error.response.data);

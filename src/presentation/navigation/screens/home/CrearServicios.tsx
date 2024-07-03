@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 import { Alert, ScrollView } from 'react-native';
-import { useServiceStore } from '../../../store/auth/useServiceStore';
+import { useServiceStore } from '../../../store/useServiceStore';
 
 
 export const CrearServicios = () => {
